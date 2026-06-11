@@ -4,18 +4,18 @@
  * 
  * 检查用户行为模式，决定是否需要触发 tips
  * 主要检查：
- * 1. Session 活跃时长
- * 2. 消息数量
+ * 1. Session 活跃时长（从 sessions.json 获取）
+ * 2. 消息数量（从 .jsonl 文件行数获取）
  * 3. Channel 使用模式
  * 
  * 使用方式：
  * node check.js [options]
  * 
  * Options:
- *   --user<id>    指定用户 ID
+ *   --user <id>    指定用户 ID
  *   --channel <ch> 指定 channel
  *   --dry-run      只检查不触发
- *   --json        输出 JSON 格式
+ *   --json         输出 JSON 格式
  */
 
 const fs = require('fs');
@@ -27,11 +27,14 @@ const CONFIG = {
   baseDir: path.resolve(__dirname, '..'),
   dataDir: path.resolve(__dirname, '../data'),
   tipsFile: path.resolve(__dirname, '../data/tips.json'),
-  sessionsDir: path.resolve(os.homedir(), '.openclaw/sessions'),
+  
+  // OpenClaw session存储位置
+  sessionsDir: '/home/ubuntu/.openclaw/agents/main/sessions',
+ sessionsJson: '/home/ubuntu/.openclaw/agents/main/sessions/sessions.json',
   
   // 检查阈值
   thresholds: {
-    maxSessionAgeDays: 7,        // Session超过 7 天活跃
+    maxSessionAgeDays: 7,        // Session 超过 7 天活跃
     minMessageCount: 20,         // 最小消息数
     minDaysActive: 3,            // 最小活跃天数
   },
@@ -59,29 +62,59 @@ function loadTips() {
 function getSessions() {
   const sessions = [];
   
-  if (!fs.existsSync(CONFIG.sessionsDir)) {
-    return sessions;
-  }
-  
-  const entries = fs.readdirSync(CONFIG.sessionsDir, { withFileTypes: true });
-  
-  for (const entry of entries) {
-    if (entry.isDirectory()) {
-      const sessionPath = path.join(CONFIG.sessionsDir, entry.name);
-      const metaFile = path.join(sessionPath, 'meta.json');
-      
-      if (fs.existsSync(metaFile)) {
-        try {
-          const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+  // 优先从 sessions.json 读取
+  if (fs.existsSync(CONFIG.sessionsJson)) {
+    try {
+      const sessionsData = JSON.parse(fs.readFileSync(CONFIG.sessionsJson, 'utf8'));
+      if (Array.isArray(sessionsData)) {
+        for (const s of sessionsData) {
           sessions.push({
-            id: entry.name,
-            path: sessionPath,
-            ...meta
+            id: s.id || s.sessionId,
+            createdAt: s.createdAt,
+            lastActiveAt: s.lastActiveAt,
+            messageCount: s.messageCount || 0,
+            channel: s.channel || 'telegram',
+            userId: s.userId,
           });
-        } catch (e) {
-          // 忽略无效的 meta 文件
         }
       }
+    } catch (e) {
+      console.error('Error reading sessions.json:', e.message);
+    }
+  }
+  
+  // 如果 sessions.json 为空或不存在，从 .jsonl 文件补充
+  if (sessions.length === 0 && fs.existsSync(CONFIG.sessionsDir)) {
+    const entries = fs.readdirSync(CONFIG.sessionsDir);
+    
+    for (const entry of entries) {
+      // 只处理 .jsonl 文件
+      if (!entry.endsWith('.jsonl') || entry.includes('.deleted.') || entry.includes('.checkpoint.')) {
+        continue;
+      }
+      
+      const sessionPath = path.join(CONFIG.sessionsDir, entry);
+      const stats = fs.statSync(sessionPath);
+      
+      // 从文件名提取 session ID（去掉 .jsonl 后缀）
+      let sessionId = entry.replace('.jsonl', '');
+      
+      // 统计消息数量（每行一个 JSON 对象）
+      let messageCount = 0;
+      try {
+        const content = fs.readFileSync(sessionPath, 'utf8');
+        messageCount = content.split('\n').filter(line => line.trim() && line.includes('"role"')).length;
+      } catch (e) {
+        // 忽略读取错误
+      }
+      
+      sessions.push({
+        id: sessionId,
+        createdAt: stats.birthtime.toISOString(),
+        lastActiveAt: stats.mtime.toISOString(),
+        messageCount,
+        channel: 'telegram', // 默认假设是 telegram
+      });
     }
   }
   
@@ -123,7 +156,7 @@ function shouldTriggerTip(tip, analysis, channel) {
   
   const trigger = tip.trigger;
   
-  // 关键词触发 -总是可以检查
+  // 关键词触发 - 总是可以检查
   if (trigger.type === 'keyword') {
     return true;
   }
@@ -180,7 +213,7 @@ function getSuggestedTips(channel = 'telegram') {
       if (shouldTriggerTip(tip, analysis, channel)) {
         suggestions.push({
           tip,
-          reason: `Session ${analysis.id} 活跃 ${analysis.ageDays} 天，${analysis.messageCount} 条消息`,
+          reason: `Session ${analysis.id.substring(0, 8)}... 活跃 ${analysis.ageDays} 天，${analysis.messageCount} 条消息`,
           session: analysis,
         });
         break; // 每个 tip 只添加一次
@@ -258,7 +291,7 @@ function main() {
   if (options.json) {
     console.log(JSON.stringify({
       channel: options.channel,
-      suggestions: suggestions.slice(0, 3), //最多返回 3 个
+      suggestions: suggestions.slice(0, 3),
       totalFound: suggestions.length,
     }, null, 2));
   } else {
@@ -271,7 +304,7 @@ function main() {
     
     for (const { tip, reason } of suggestions.slice(0, 3)) {
       console.log(`【${tip.icon} ${tip.title}】(优先级: ${tip.priority})`);
-      console.log(`   原因: ${reason}`);
+      console.log(`原因: ${reason}`);
       console.log(`   内容: ${tip.content.substring(0, 100)}...`);
       console.log();
     }

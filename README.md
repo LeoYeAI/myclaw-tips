@@ -1,150 +1,97 @@
 # MyClaw Pro Tips
 
-> 预装到所有 MyClaw 实例的智能使用技巧助手
+> [:us: English](./README.md) · [:cn: 中文](./README.zh-CN.md)
 
-## 功能
+---
 
-MyClaw Pro Tips 是一个内置的使用技巧系统，旨在帮助用户更好地使用 MyClaw。
+## English Version
 
-### 核心特性
+> Smart usage tips pre-installed on all MyClaw instances
 
-- 💡 **智能感知** - 根据用户行为模式，在恰当时机分享技巧
-- 🎯 **上下文相关** - 每条 tip 都与当前场景紧密相关
-- 🚫 **不打扰** - 只在有明确信号时才分享
-- 📝 **易于扩展** - 通过 JSON 配置管理 tips
+MyClaw Pro Tips is a built-in tips system that helps users get the most out of MyClaw by sharing relevant tips at the right moment.
 
-### 包含的 Tips
+### Key Features
 
-| Tip | 说明 |
-|-----|------|
-| Telegram Topic 分流 | 解决单 session上下文膨胀问题（两种方案） |
-| Session 管理技巧 | 教你如何管理对话上下文 |
-| Skill 发现 | 探索 MyClaw 的各种能力 |
-| Vibe Coding 技巧 | 高效写代码的最佳实践 |
-| 定时任务与提醒 | 设置自动化提醒 |
-| 多 Channel 支持 | Telegram/WhatsApp/Discord |
-| 多模型切换 | 按需切换不同 AI 模型 |
-| 语音交互 | 语音消息支持 |
-| Workspace 文件管理 | 你的文件你做主 |
-| 隐私与数据 | 数据安全说明 |
-| 自动化工作流 | 创建自动化流程 |
-| 上下文压缩 | 了解自动压缩机制 |
+- 💡 **Smart Detection** - Shares tips based on user behavior patterns
+- 🎯 **Context-Aware** - Each tip is relevant to the current situation
+- 🚫 **Non-Intrusive** - Only shares when there's a clear signal
+- 📝 **Easily Extensible** - Manage tips via JSON configuration
 
-## 触发机制
+### Included Tips
 
-### 1. 行为感知（主要）
+| Tip | Description |
+|-----|-------------|
+| Telegram Topic Threading | Solve context explosion (2 solutions) |
+| Session Management | How to manage conversation context |
+| Skill Discovery | Explore MyClaw's capabilities |
+| Vibe Coding Tips | Best practices for efficient coding |
+| Cron& Reminders | Set up automated reminders |
+| Multi-Channel Support | Telegram/WhatsApp/Discord |
+| Model Switching | Switch AI models on demand |
+| Voice Interaction | Voice message support |
+| Workspace File Management | Your files, your control |
+| Privacy & Data | Data security explained |
+| Automation Workflow | Create automated flows |
+| Context Compaction | Understanding auto-compression |
 
-Agent 会根据以下信号自动分享 tip：
-
-- 用户通过 Telegram DM 单 session 聊天超过 15 条消息 → **Telegram Topic 分流**
-- 用户抱怨"越聊越慢"、"context 太大"、"AI 忘记信息" → **Telegram Topic 分流**
-- 用户问"你能做什么" → Skill 发现
-- 用户开始写代码 → Vibe Coding 技巧
-- 用户询问"定时"相关 → 定时任务与提醒
-
-### 2. 关键词触发
-
-用户可以直接说：
-- "有什么 tips"
-- "使用技巧"
-- "给我一个 tip"
-
-### 3. Cron 定时检查（辅助）
-
-每 24 小时检查一次用户行为模式，只在发现问题才触发。
-
-## 安装
-
-###方式 1: ClawHub
+## Quick Start
 
 ```bash
-clawhub install myclaw-tips
+# Install
+git clone https://github.com/LeoYeAI/myclaw-tips.git
+cp -r myclaw-tips ~/.openclaw/workspace/skills/
+
+# List all tips
+node ~/.openclaw/workspace/skills/myclaw-tips/scripts/list.js
+
+# Get specific tip
+node ~/.openclaw/workspace/skills/myclaw-tips/scripts/get.js telegram-topics
 ```
 
-### 方式 2: GitHub
+## Core Tip: Telegram Topic Threading
+
+**The Problem:** Telegram DM single session chat too long → context explosion → slower responses → AI "forgets" early information
+
+**Solutions (Two Options):**
+
+| Solution | How | Best For |
+|----------|-----|----------|
+| **A. Topic Threading** (Recommended) | @BotFather → /settopics → Enabled | Daily multi-topic switching |
+| **B. Group Chat** | Create new group, add only Bot, rename like "ProjectA" | Long-term projects, collaboration |
+
+## Installation
 
 ```bash
-git clone https://github.com/myclawai/myclaw-tips.git
-cd myclaw-tips
-#复制到 workspace
+# Method 1: ClawHub
+clawhub install myclaw-tips
+
+# Method 2: GitHub
+git clone https://github.com/LeoYeAI/myclaw-tips.git
 cp -r myclaw-tips ~/.openclaw/workspace/skills/
 ```
 
-###方式 3: OpenClaw Skill 安装
+## Extending Tips
 
-在 OpenClaw 配置中添加 skill。
-
-## 使用
-
-### Agent 自动分享
-
-无需任何操作，Agent 会在恰当时机自动分享 tips。
-
-### 手动查询
-
-```bash
-# 列出所有 tips
-node ~/.openclaw/workspace/skills/myclaw-tips/scripts/list.js
-
-# 获取特定 tip
-node ~/.openclaw/workspace/skills/myclaw-tips/scripts/get.js <tip-id>
-
-# 检查是否有值得分享的 tip
-node ~/.openclaw/workspace/skills/myclaw-tips/scripts/check.js
-```
-
-##扩展 Tips
-
-在 `data/tips.json` 中添加新 tip：
+Add new tips in `data/tips.json`:
 
 ```json
 {
   "id": "your-tip-id",
-  "title": "你的 Tip 标题",
+  "title": "Your Tip Title",
   "icon": "💡",
   "trigger": {
     "type": "keyword|behavior|cron",
-    "pattern": ["关键词1", "关键词2"]
+    "pattern": ["keyword1", "keyword2"]
   },
-  "content": "Tip 内容",
+  "content": "Tip content",
   "action": {
     "type": "command|link|guide",
-    "value": "操作指引"
+    "value": "action description"
   },
   "priority": 1-10,
   "tags": ["tag1", "tag2"]
 }
 ```
-
-## 核心 Tip：Telegram 分流技巧
-
-这是最重要的 tip，解决 Telegram DM 单 session 聊天导致的上下文膨胀问题。
-
-### 问题
-
-Telegram DM 单 session聊天太久 →上下文膨胀 → 响应变慢 → AI 忘记早期信息
-
-### 解决方案（两种）
-
-| 方案 | 操作 | 适合场景 |
-|------|------|----------|
-| **A. Topic 分流**（推荐） | @BotFather → /settopics → Enabled | 日常多话题切换，轻量 |
-| **B. Group Chat** | 新建群组只加 Bot，改名如「项目A」 | 长期项目分离，可协作 |
-
-## 配置
-
-| 环境变量 | 默认值 | 说明 |
-|----------|--------|------|
-| `TIPS_CHECK_INTERVAL` | `86400000` | Cron 检查间隔（ms，默认 24h） |
-| `TIPS_MIN_PRIORITY` | `5` | 最低显示优先级 |
-| `TIPS_DISABLED` | `false` | 是否禁用 tips |
-
-## 关于这个 Skill
-
-- **版本**: 1.0.0
-- **作者**: MyClaw Team
-- **许可证**: MIT
-- **反馈**: https://github.com/myclawai/skills/issues
 
 ## Powered by MyClaw
 

@@ -1,0 +1,253 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-06-11T00:00:00Z",
+  "tips": [
+    {
+      "id": "telegram-topics",
+      "title": "Telegram Topic 分流",
+      "titleEn": "Telegram Topic Threading",
+      "icon": "💬",
+      "trigger": {
+        "type": "behavior",
+        "pattern": ["telegram", "topic", "session", "context", "长对话", "越聊越慢"],
+        "conditions": {
+          "minMessageCount": 20,
+          "minDaysActive": 3,
+          "channel": "telegram"
+        }
+      },
+      "content": "你一直在用 Telegram DM 和我聊天，所有的对话都在一个 session 里。随着对话越来越长，context 会越来越膨胀，响应也会变慢。\n\n**更好的方式：开启 Telegram Topic 权限**\n\n1. 在 Telegram Bot (@BotFather) 中启用 Topics\n2. 为不同主题创建不同的 topic\n3. 每个 topic 都是一个独立的 session，上下文可控\n\n这样你可以：\n- 同时讨论多个项目，每个都是清晰的独立上下文\n- 避免长 session 导致的 context 膨胀\n- 保持每个对话的专注和高效",
+      "action": {
+        "type": "guide",
+        "steps": [
+          "在 Telegram 搜索 @BotFather",
+          "发送 /newbot 创建新 bot（如果还没有）",
+          "发送 /settopics 启用 topics",
+          "在群组中创建新 topic 开始新对话"
+        ]
+      },
+      "priority": 9,
+      "tags": ["telegram", "session", "context", "efficiency"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "session-management",
+      "title": "Session 管理技巧",
+      "titleEn": "Session Management",
+      "icon": "🔧",
+      "trigger": {
+        "type": "behavior",
+        "pattern": ["session", "context", "上下文", "清理", "reset"],
+        "conditions": {
+          "minMessageCount": 10
+        }
+      },
+      "content": "MyClaw 的 session 是有记忆的，但记忆不是无限的。\n\n**管理技巧：**\n\n1. **明确主题**：每个 session 专注一个主题\n2. **适时重启**：当话题转换时，可以开启新 session\n3. **使用 /new 命令**：重置当前 session 的上下文\n4. **Topic 分流**（Telegram）：不同话题用不同 topic\n\n你可以随时说「开启新 session」或「reset」来重置上下文。",
+      "action": {
+        "type": "command",
+        "value": "直接说「开启新 session」或「/new」"
+      },
+      "priority": 8,
+      "tags": ["session", "context", "management"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "skill-discovery",
+      "title": "Skill 发现",
+      "titleEn": "Skill Discovery",
+      "icon": "🔍",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["你能做什么", "有什么功能", "skill", "查找 skill", "find skills", "有哪些 skill"]
+      },
+      "content": "你知道吗？我有很多技能（Skills）可以调用！\n\n**查找 Skill：**\n- 说「查找 skill」或「find skills」\n- 说「搜索关于 X 的 skill」\n\n**常用 Skills：**\n- `coding-agent`: 代码编写和调试\n- `github`: GitHub 操作\n- `summarize`: 长文本摘要\n- `weather`: 天气查询\n- `taskflow`: 任务管理\n\n想探索更多？试试说「给我看看有哪些 skill」。",
+      "action": {
+        "type": "command",
+        "value": "「查找 skill」或「给我看看有哪些 skill」"
+      },
+      "priority": 7,
+      "tags": ["skill", "discovery", "capabilities"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "compaction",
+      "title": "上下文压缩",
+      "titleEn": "Context Compaction",
+      "icon": "📦",
+      "trigger": {
+        "type": "behavior",
+        "pattern": ["context", "上下文", "压缩", "变慢", "越来越慢"],
+        "conditions": {
+          "minMessageCount": 50
+        }
+      },
+      "content": "当一个 session 对话很多时，MyClaw 会自动压缩上下文。\n\n**压缩过程：**\n1. 保留关键信息和决策\n2. 摘要化早期对话\n3. 保持最近对话完整\n4. 整体压缩到 ~50% 大小\n\n**你不需要做任何事，这是自动的。**\n\n💡 但如果你想保持完整记忆：\n- 使用 Topic 分流（每个 topic 独立 session）\n- 适时开启新 session\n- 重要结论保存在外部（Notion/Obsidian）",
+      "action": {
+        "type": "link",
+        "value": "了解更多：Telegram Topic 分流技巧"
+      },
+      "priority": 7,
+      "tags": ["context", "compaction", "memory"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "vibe-coding",
+      "title": "Vibe Coding 技巧",
+      "titleEn": "Vibe Coding Tips",
+      "icon": "🚀",
+      "trigger": {
+        "type": "behavior",
+        "pattern": ["写代码", "coding", "bug", "代码", "programming"],
+        "conditions": {
+          "minMessageCount": 3
+        }
+      },
+      "content": "想要更高效地写代码？试试 vibe coding：\n\n**高效模式：**\n\n1. **描述你想要什么，而不是怎么实现**\n   ✅ \"做一个用户登录页面，包含邮箱和密码输入\"\n   ❌ \"写一个 div，包含 flex 布局...\"\n\n2. **让 AI 帮你选择技术栈**\n   ✅ \"我想做一个博客，用什么框架好？\"\n\n3. **迭代优化，而不是一步到位**\n   ✅ \"这个按钮颜色太暗，调亮一点\"\n\n4. **遇到问题时详细描述错误**\n   ✅ \"点击提交后出现 'Cannot read property...'\"\n\n🚀 **启动 Claude Code：**\n说「帮我打开 Claude Code」或「start coding mode」",
+      "action": {
+        "type": "command",
+        "value": "「start coding mode」或「帮我打开 Claude Code」"
+      },
+      "priority": 8,
+      "tags": ["coding", "vibe-coding", "productivity"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "cron-reminders",
+      "title": "定时任务与提醒",
+      "titleEn": "Cron & Reminders",
+      "icon": "⏰",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["定时", "提醒", "cron", "每天", "每周", "schedule", "reminder"]
+      },
+      "content": "我可以帮你设置定时任务和提醒！\n\n**示例：**\n- \"每天早上 9 点提醒我查看邮件\"\n- \"每周一早上 10 点给我一个本周计划模板\"\n- \"1 小时后提醒我开会\"\n\n**设置方式：**\n直接告诉我时间和任务，我帮你创建 cron job。\n\n**查看我的定时任务：**\n说「查看我的定时任务」或「list cron jobs」",
+      "action": {
+        "type": "command",
+        "value": "「list cron jobs」或直接告诉我「每天早上X点提醒我Y」"
+      },
+      "priority": 6,
+      "tags": ["cron", "reminder", "automation"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "multi-channel",
+      "title": "多 Channel 支持",
+      "titleEn": "Multi-Channel Support",
+      "icon": "📱",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["channel", "渠道", "telegram", "whatsapp", "discord", "除了"]
+      },
+      "content": "MyClaw 支持多种渠道连接我：\n\n**Telegram**\n- 适合日常聊天\n- 支持 Topic 分流（推荐开启）\n\n**WhatsApp**\n- 适合移动端使用\n- 支持语音消息\n\n**Web UI (myclaw.ai)**\n- 功能最完整\n- 适合复杂任务\n\n**Discord**\n- 适合社区使用\n\n你可以在多个渠道同时连接我，随时随地访问。",
+      "action": {
+        "type": "link",
+        "value": "了解更多：myclaw.ai/setup"
+      },
+      "priority": 6,
+      "tags": ["channel", "telegram", "whatsapp", "discord"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "model-switching",
+      "title": "多模型切换",
+      "titleEn": "Model Switching",
+      "icon": "🤖",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["模型", "model", "Claude", "GPT", "切换", "switch"]
+      },
+      "content": "MyClaw 支持多种 AI 模型，按需切换！\n\n**可用模型：**\n- **Claude Opus**: 最强推理，适合复杂任务\n- **Claude Sonnet**: 平衡性能与速度\n- **GPT-5**: OpenAI 最新模型\n- **Gemini**: Google 长上下文模型\n\n**切换方式：**\n- 说「切换到 Claude Sonnet」\n- 说「用 GPT-5 来处理这个」\n- 默认使用 Opus 4.6\n\n💡 不同任务用不同模型，效率更高！",
+      "action": {
+        "type": "command",
+        "value": "「切换到 Claude Sonnet」或「用 GPT-5 处理这个」"
+      },
+      "priority": 6,
+      "tags": ["model", "ai", "switch"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "voice-interaction",
+      "title": "语音交互",
+      "titleEn": "Voice Interaction",
+      "icon": "🎤",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["语音", "voice", "说话", "audio", "录制"]
+      },
+      "content": "MyClaw 支持语音消息！\n\n**使用方式：**\n- 在 WhatsApp/Telegram 发送语音消息\n- 我会自动转录并回复\n- 回复也可以转为语音\n\n**语音设置：**\n- 说「开启语音模式」启用语音回复\n- 说「关闭语音模式」切换回文字\n\n💡 语音识别使用 OpenAI Whisper，识别准确率高。",
+      "action": {
+        "type": "command",
+        "value": "「开启语音模式」"
+      },
+      "priority": 5,
+      "tags": ["voice", "audio", "speech"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "workspace-file",
+      "title": "Workspace 文件管理",
+      "titleEn": "Workspace File Management",
+      "icon": "📁",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["文件", "file", "workspace", "保存", "代码在哪"]
+      },
+      "content": "你的 MyClaw 有一个独立的文件系统！\n\n**文件位置：**\n```\n~/.openclaw/workspace/\n├── skills/          # 你的 skills\n├── memory/          # 记忆数据\n├── data/            # 数据文件\n└── scripts/         # 脚本\n```\n\n**常用操作：**\n- \"读取文件 X\"\n- \"写一个文件叫 X，内容是 Y\"\n- \"列出 workspace 中的文件\"\n- \"执行脚本 X\"\n\n💡 你的代码和文件都在你自己的服务器上，完全可控。",
+      "action": {
+        "type": "command",
+        "value": "「列出 workspace 中的文件」"
+      },
+      "priority": 6,
+      "tags": ["file", "code", "workspace"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "privacy-data",
+      "title": "隐私与数据",
+      "titleEn": "Privacy & Data",
+      "icon": "🔒",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["隐私", "privacy", "数据", "安全", "data", "在哪里"]
+      },
+      "content": "**你的数据你做主**\n\n🛡️ **隐私保护：**\n1. 你的对话数据存储在你自己的服务器上\n2. OpenClaw 支持本地部署，数据不出境\n3. 你可以随时导出或删除你的数据\n4. 默认配置已启用数据保护\n\n**数据位置：**\n- 对话历史：~/.openclaw/sessions/\n- Workspace：~/.openclaw/workspace/\n- 配置：~/.openclaw/openclaw.json\n\n需要导出数据？说「导出我的数据」。",
+      "action": {
+        "type": "command",
+        "value": "「导出我的数据」"
+      },
+      "priority": 5,
+      "tags": ["privacy", "data", "security"],
+      "dismissable": true,
+      "oncePerUser": false
+    },
+    {
+      "id": "automation-workflow",
+      "title": "自动化工作流",
+      "titleEn": "Automation Workflow",
+      "icon": "⚡",
+      "trigger": {
+        "type": "keyword",
+        "pattern": ["自动化", "automation", "workflow", "每次", "当"]
+      },
+      "content": "让 MyClaw 自动完成重复性任务！\n\n**自动化示例：**\n- \"每次有人发邮件，帮我标记重要客户\"\n- \"每天早上 8 点给我发天气和日程\"\n- \"当 GitHub 有新 issue 时通知我\"\n\n**设置方式：**\n1. 描述触发条件（时间/事件）\n2. 描述要执行的操作\n3. 我帮你创建自动化流程\n\n**查看自动化：**\n说「我的自动化」或「list workflows」",
+      "action": {
+        "type": "command",
+        "value": "「list workflows」或直接描述你的自动化需求"
+      },
+      "priority": 7,
+      "tags": ["automation", "workflow", "agent"],
+      "dismissable": true,
+      "oncePerUser": false
+    }
+  ]
+}

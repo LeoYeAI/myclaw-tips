@@ -29,8 +29,8 @@ const CONFIG = {
   tipsFile: path.resolve(__dirname, '../data/tips.json'),
   
   // OpenClaw session存储位置
-  sessionsDir: '/home/ubuntu/.openclaw/agents/main/sessions',
- sessionsJson: '/home/ubuntu/.openclaw/agents/main/sessions/sessions.json',
+  sessionsDir: path.resolve(os.homedir(), '.openclaw/agents/main/sessions'),
+  sessionsJson: path.resolve(os.homedir(), '.openclaw/agents/main/sessions/sessions.json'),
   
   // 检查阈值
   thresholds: {
